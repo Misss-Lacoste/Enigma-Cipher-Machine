@@ -1,6 +1,6 @@
 #let cfg = (
     project: (
-        code: "RU.xxxxxxxx.xx.xx-xx xx xx-x",
+        code: "",
         name: [
             ШИФРОВАЛЬНАЯ МАШИНА "ЭНИГМА": РЕАЛИЗАЦИЯ АЛГОРИТМОВ ШИФРОВАНИЯ.
         ],
