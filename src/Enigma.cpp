@@ -9,6 +9,74 @@
 #include "Rotor.hpp"
 #include "Plugboard.hpp"
 
+int Enigma::start() {
+    std::array<Rotor, 3> rotors;
+    std::array<int, 3> rotorsID = {0, 0, 0};
+    std::cout << "Please, configure 3 rotors from '1' to '5'. Have to put different ones." << std::endl;
+
+    if (!selectRotors(rotorsID)) {
+        return EXIT_FAILURE;
+    }
+    for (auto i = 0; i < 3; i++) {   
+        rotors[i].setRotor(rotorsID[i]);
+    }
+    std::cout << "Please, configure rings. Enter 3 alphabetic chars from 'A' to 'Z'. Upper or lowercase accepted." << std::endl;
+
+    if (Rings(*ringSettings)) {
+        return EXIT_FAILURE;
+    }
+    for (auto i = 0; i < 3; i++) {
+        rotors[i].ring = ringSettings[0][i];
+    }
+    
+    Plugboard plugboard;
+	char userPlugInput;
+	//bool correctInput = false;
+	while(true) {
+		std::cout << "Configuration of the plugboard is optional. Press 'Y' or 'y' to adjust it. Press 'N' or 'n' to skip: ";
+		std::cin >> userPlugInput;
+		if (userPlugInput == 'Y' || userPlugInput == 'y') {
+        	if (plugboard.setPlugboard()) {
+            	return EXIT_FAILURE;
+        	}
+			//correctInput = true;
+			break;
+		} else if (userPlugInput == 'n' || userPlugInput == 'N') {
+			std::cout << "Continue without plugboard configuration." << std::endl;
+			//correctInput = true;
+			break;
+		} else {
+			std::cerr << "Misspelled. ";
+		}
+	}
+
+	Reflector reflector;
+    std::string message;
+    int MovingsCount = 0;
+    std::cout << "Please, enter the secret message: ";
+
+	if (!(userPlugInput == 'y' || userPlugInput == 'Y')) {
+		std::cin.ignore();
+	}
+	std::getline(std::cin, message);
+    std::transform(message.begin(), message.end(), message.begin(), ::toupper);
+
+	for (size_t i = 0; i < message.length(); ++i) {
+    char& eachCharacter = message[i];  // берём ссылку на символ по индексу i
+
+    if (eachCharacter >= 'A' && eachCharacter <= 'Z') {
+        encipher(rotors, reflector, plugboard, eachCharacter, MovingsCount);
+    	}
+	}
+
+    std::cout << "Your ciphered message is:  " << message << std::endl;
+    std::ofstream result;
+    result.open("SecretMessage.txt");
+    result << message;
+    result.close();
+    return EXIT_SUCCESS;
+}
+
 bool Enigma::input(int choice) {
     switch(choice) {
 		case 1:
@@ -24,11 +92,10 @@ bool Enigma::input(int choice) {
     }
 }
 
-bool Enigma::searchCopies(const std::array<int, 3>& rotorsID) //link to avoid copying
+bool Enigma::searchCopies(const std::array<int, 3> &rotorsID)  //link to avoid copying
 {
-	if (rotorsID[0] == rotorsID[1] || rotorsID[1] == rotorsID[2] ||	rotorsID[0] == rotorsID[2])
-	{
-		std::cout << "Warning. Error! Has been found similar rotors. Have to put different ones.\n";
+	if (rotorsID[0] == rotorsID[1] || rotorsID[1] == rotorsID[2] ||	rotorsID[0] == rotorsID[2]) {
+		std::cout << "Warning. Error! Have been found similar rotors. Have to put different ones.\n";
 		//throw std::invalid_argument("Error: there have been foun duplicates.");
 		return true;
 	}
@@ -47,7 +114,7 @@ bool Enigma::Rings(std::string &ringSettings) {
 	const size_t ringNumber = 3;
 
 	if (ringSettings.empty()) {
-        std::cout << "Warning. Error! No ring settings. Essential to set up rings." << std::endl;
+        std::cout << "Warning. Error! No ring settings. Essential to configure rings." << std::endl;
         return true;
     }
 	if (ringSettings.length() != ringNumber) {
@@ -57,7 +124,7 @@ bool Enigma::Rings(std::string &ringSettings) {
 	for (size_t i = 0; i < ringSettings.length(); ++i) {
         char c = ringSettings[i];
         if (!std::isalpha(c) || !std::isupper(c)) {
-            std::cout << "Warning. Error! Character at position " << (i + 1) << " ('" << c << "') is not a valid letter (A-Z)." << std::endl;
+            std::cout << "Warning. Error! Character at position " << (i + 1) << " ('" << c << "') is not correct alphabetic character (A-Z)." << std::endl;
             return true;
         }
     }
@@ -124,81 +191,33 @@ void Enigma::reversePassThroughRotors(std::array<Rotor, 3> &rotors, char &charac
 
 //bool Enigma::isValidRingSetting(const std::string& settings)
 
-int Enigma::start()
-{
-	std::array<Rotor, 3> rotors;
-	std::array<int, 3> rotorsID = {0, 0, 0};
-	char buffer = '0'; 
-
-	std::cout << "Set up 3 rotors. Choose from 1 to 5. Repeats restricted" << std::endl;
-
-	std::cout << "First rotor: ";
-	std::cin >> buffer;
-	rotorsID[0] = char_to_int(buffer);
-	if (input(rotorsID[0]))
-	{
-		return EXIT_FAILURE;
-	}
-	std::cout << "Second rotor: ";
-	std::cin >> buffer;
-	rotorsID[1] = char_to_int(buffer);
-	if (searchCopies(rotorsID) || input(rotorsID[1]))
-	{
-		return EXIT_FAILURE;
-	}
-	std::cout << "Third rotor: ";
+/*std::cout << "Third rotor: ";
 	std::cin >> buffer;
 	rotorsID[2] = char_to_int(buffer);
 	if (searchCopies(rotorsID) || input(rotorsID[2]))
 	{
 		return EXIT_FAILURE;
-	}
-	for (auto i = 0; i < 3; i++)
-	{	
-		rotors[i].setRotor(rotorsID[i]);
-	}
+	}*/
 
-	std::cout << "Set up rings. Enter 3 characters from A to Z. Not case sensitive" << std::endl;
-	if (Rings(*ringSettings))
-	{
-		return EXIT_FAILURE;
-	}
-	for (auto i = 0; i < 3; i++)
-	{
-		rotors[i].ring = ringSettings[0][i];
-	}
-
-	Plugboard plugboard;
-	char plugboardOption;
-	std::cout << "Would you like to set up plugboard? Y/y to set up or any other character to skip: ";
-	std::cin >> plugboardOption;
-	if (plugboardOption == 'y' || plugboardOption == 'Y')
-	{
-		if (plugboard.setPlugboard())
-		{
-			return EXIT_FAILURE;
-		}
-	}
- 
-	Reflector reflector;
-	std::string message;
-	int MovingsCount = 0;
-	std::cout << "Type your message: ";
-	if (!(plugboardOption == 'y' || plugboardOption == 'Y')) std::cin.ignore();
-	std::getline(std::cin, message);
-	std::transform(message.begin(), message.end(), message.begin(), ::toupper);
-	for (auto &eachCharacter : message)
-	{
-		if (eachCharacter > 64 && eachCharacter < 91)	// 65 == 'A', 90 == 'Z'
-		{
-			encipher(rotors, reflector, plugboard, eachCharacter, MovingsCount);
-		}
-	}
-	std::cout << "Ciphered message:  " << message << std::endl;
-	std::ofstream result;
-	result.open("result.txt");
-	result << message;
-	result.close();
-
-	return EXIT_SUCCESS;
+bool Enigma::selectRotors(std::array<int, 3> &rotorsID) {
+    const char* rotorName[3] = {"First", "Second", "Third"};
+    char buffer;
+    
+    for (int i = 0; i < 3; i++) {
+        std::cout << rotorName[i] << " rotor: ";
+        std::cin >> buffer;
+        rotorsID[i] = char_to_int(buffer);
+        
+        if (i == 0) { //if it is the first rotor
+            if (input(rotorsID[i])) {
+                return false; //error
+            }
+        }
+        else { //if it is the 2nd and 3rd rotrs
+            if (searchCopies(rotorsID) || input(rotorsID[i])) {
+                return false; //error
+            }
+        }
+    }
+    return true; //ok
 }
