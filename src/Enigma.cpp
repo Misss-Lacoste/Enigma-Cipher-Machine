@@ -7,7 +7,7 @@
 #include "Enigma.hpp"
 #include "Reflector.hpp"
 #include "Rotor.hpp"
-#include "Plugboard.hpp"
+#include "Steckerbrett.hpp"
 
 int Enigma::start() {
     std::array<Rotor, 3> rotors;
@@ -29,20 +29,20 @@ int Enigma::start() {
         rotors[i].ring = ringSettings[0][i];
     }
     
-    Plugboard plugboard;
-	char userPlugInput;
+    Steckerbrett Steckerbrett;
+	char userSteckInput;
 	//bool correctInput = false;
 	while(true) {
-		std::cout << "Configuration of the plugboard is optional. Press 'Y' or 'y' to adjust it. Press 'N' or 'n' to skip: ";
-		std::cin >> userPlugInput;
-		if (userPlugInput == 'Y' || userPlugInput == 'y') {
-        	if (plugboard.setPlugboard()) {
+		std::cout << "Configuration of the steckerbrett is optional. Press 'Y' or 'y' to adjust it. Press 'N' or 'n' to skip: ";
+		std::cin >> userSteckInput;
+		if (userSteckInput == 'Y' || userSteckInput == 'y') {
+        	if (Steckerbrett.SteckerbrettConfiguration()) {
             	return EXIT_FAILURE;
         	}
 			//correctInput = true;
 			break;
-		} else if (userPlugInput == 'n' || userPlugInput == 'N') {
-			std::cout << "Continue without plugboard configuration." << std::endl;
+		} else if (userSteckInput == 'n' || userSteckInput == 'N') {
+			std::cout << "Continue without steckerbrett configuration." << std::endl;
 			//correctInput = true;
 			break;
 		} else {
@@ -55,17 +55,17 @@ int Enigma::start() {
     int MovingsCount = 0;
     std::cout << "Please, enter the secret message: ";
 
-	if (!(userPlugInput == 'y' || userPlugInput == 'Y')) {
+	if (!(userSteckInput == 'y' || userSteckInput == 'Y')) {
 		std::cin.ignore();
 	}
 	std::getline(std::cin, message);
     std::transform(message.begin(), message.end(), message.begin(), ::toupper);
 
 	for (size_t i = 0; i < message.length(); ++i) {
-    char& eachCharacter = message[i];  // берём ссылку на символ по индексу i
+    char& eachCharacter = message[i];  //ссылкa на символ по индексу i
 
     if (eachCharacter >= 'A' && eachCharacter <= 'Z') {
-        encipher(rotors, reflector, plugboard, eachCharacter, MovingsCount);
+        encipher(rotors, reflector, Steckerbrett, eachCharacter, MovingsCount);
     	}
 	}
 
@@ -131,9 +131,9 @@ bool Enigma::Rings(std::string &ringSettings) {
     return false;
 }
 
-void Enigma::encipher(std::array<Rotor, 3> &rotors, Reflector &reflector, Plugboard &plugboard, char &eachCharacter, int &MovingsCount)
+void Enigma::encipher(std::array<Rotor, 3> &rotors, Reflector &reflector, Steckerbrett &Steckerbrett, char &eachCharacter, int &MovingsCount)
 {
-    plugboard.substitute(eachCharacter); //step1: substitute through plugboard
+    Steckerbrett.substitute(eachCharacter); //step1: substitute through Steckerbrett
 
     advanceRotors(rotors, MovingsCount); //step2: rotation of rotors
 
@@ -145,7 +145,7 @@ void Enigma::encipher(std::array<Rotor, 3> &rotors, Reflector &reflector, Plugbo
 
     reversePassThroughRotors(rotors, eachCharacter); //step6: reversed pass left to right  ('r' aka reversed)
 
-    plugboard.substitute(eachCharacter); //step7: final substitution through plugboard
+    Steckerbrett.substitute(eachCharacter); //step7: final substitution through Steckerbrett
 }
 
 void Enigma::advanceRotors(std::array<Rotor, 3> &rotors, int &MovingsCount)
