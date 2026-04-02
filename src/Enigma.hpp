@@ -14,6 +14,7 @@ private:
     void applyRingSettings(std::array<Rotor, 3>& rotors);
     void forwardPassThroughRotors(std::array<Rotor, 3>& rotors, char& character);
     void reversePassThroughRotors(std::array<Rotor, 3>& rotors, char& character);
+    bool selectRotors(std::array<int, 3>& rotorsID);
 public:
     std::string ringSettings[3];
     bool defaultSettings();
