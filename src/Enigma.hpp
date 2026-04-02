@@ -3,7 +3,7 @@
 
 #include <array>
 #include <string>
-#include "Plugboard.hpp"
+#include "Steckerbrett.hpp"
 #include "Reflector.hpp"
 #include "Rotor.hpp"
 
@@ -22,7 +22,7 @@ public:
     int char_to_int(char);
     bool input(int);
     bool Rings(std::string &);
-    void encipher(std::array<Rotor, 3> &, Reflector &, Plugboard &, char &, int &);
+    void encipher(std::array<Rotor, 3> &, Reflector &, Steckerbrett &, char &, int &);
     int start();
 };
 
