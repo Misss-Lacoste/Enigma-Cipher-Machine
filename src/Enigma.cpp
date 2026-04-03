@@ -69,7 +69,7 @@ int Enigma::start() {
     	}
 	}
 
-    std::cout << "Your ciphered message is:  " << message << std::endl;
+    std::cout << "Your ciphered message is: " << message << std::endl;
     std::ofstream result;
     result.open("SecretMessage.txt");
     result << message;
@@ -86,7 +86,7 @@ bool Enigma::input(int choice) {
         case 5:
             return false;  //ok
 		default:
-            std::cout << "Warning. Error! Incorrect input. You are allowed to enter only 3 rotors.\n";
+            std::cout << "Warning. Error! Incorrect input.\n";
 			//std::cerr << "Error: incorrect input. You are allowed to enter only 3 rotors.\n";
             return true;   //error
     }
