@@ -10,7 +10,7 @@ bool Steckerbrett::SteckerbrettsearchCopies() {
         char c = SteckerbrettLetters[i];
         SeenLetter[c]++;
         if (SeenLetter[c] > 1) {
-            std::cout << "Warning. You have to enter different symbols, but entered similar ones in different digraphs (ML and MR, for example).\n";
+            std::cout << "Warning. You have to enter different symbols, but entered similar ones in different digraphs (ML and MR, for example)." << std::endl;
             return true;
         }
     }
@@ -38,7 +38,7 @@ bool Steckerbrett::OkInput() {
 }
 
 bool Steckerbrett::SteckerbrettConfiguration() {
-    std::cout << "Please, enter digraph pairs (pairs of letters) as 'ML PI TA' etc., for example.\n" << std::endl;
+    std::cout << "Please, enter digraph pairs (pairs of letters) as 'ML PI TA' etc., for example." << std::endl;
     std::cin.ignore();
 
     std::getline(std::cin, SteckerbrettLetters);
