@@ -141,7 +141,7 @@ void Enigma::encipher(std::array<Rotor, 3> &rotors, Reflector &reflector, Stecke
 
     forwardPassThroughRotors(rotors, eachCharacter); //step4: right to left pass ('s' aka straight)
 
-    reflector.reflectorSubstitute(eachCharacter); //step5
+    reflector.reflectorConfiguration(eachCharacter); //step5
 
     reversePassThroughRotors(rotors, eachCharacter); //step6: reversed pass left to right  ('r' aka reversed)
 
