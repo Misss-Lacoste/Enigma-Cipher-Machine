@@ -153,12 +153,13 @@ void Enigma::advanceRotors(std::array<Rotor, 3> &rotors, int &MovingsCount)
     constexpr int ROTOR_2_STEP = 26;
     constexpr int ROTOR_1_STEP = 676; //26*26
 
-    rotors[2].offset();
-    if (MovingsCount % ROTOR_2_STEP == 0 && MovingsCount > 0) {
+    rotors[2].offset(); //right rotor(3rd) moves for 1 step at the beggining of encryption
+
+    if (MovingsCount % ROTOR_2_STEP == 0 && MovingsCount > 0) { //move the middle (2nd) rotor every 26 steps
         rotors[1].offset();
     }
 
-    if (MovingsCount % ROTOR_1_STEP == 0 && MovingsCount > 0) {
+    if (MovingsCount % ROTOR_1_STEP == 0 && MovingsCount > 0) { //move the left (1st) rotor every 676 steps
         rotors[0].offset();
     }
     ++MovingsCount;
