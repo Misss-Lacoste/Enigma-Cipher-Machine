@@ -24,7 +24,7 @@ void Rotor::substitute(char &ch, char option) {
         ch = findMatchingChar(ch, Alphabet, rotor); //if (ch == *alphabetIterator) -> ch = *rotorIterator
     }
     else if (option == 'r') {
-        ch = findMatchingChar(ch, iAlphabet, inversedRotor); //if (ch == *alphabetIterator) -> ch = *inverseRotorIterator
+        ch = findMatchingChar(ch, inversedAlphabet, inversedRotor); //if (ch == *alphabetIterator) -> ch = *inverseRotorIterator
     }
 }
 
@@ -46,7 +46,7 @@ void Rotor::offset() {
 }
 
 //an additional shift that is applied before the main encryption
-void Rotor::ringApply(char ring) {
+void Rotor::RingConfig(char ring) {
     int steps = ring - 'A'; //how many times do we spin
     
     for (int step = 0; step < steps; step++) { //move alphabet right
