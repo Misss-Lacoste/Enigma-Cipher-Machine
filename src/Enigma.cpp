@@ -18,7 +18,7 @@ int Enigma::start() {
         return EXIT_FAILURE;
     }
     for (auto i = 0; i < 3; i++) {   
-        rotors[i].setRotor(rotorsID[i]);
+        rotors[i].ConfigureRotor(rotorsID[i]);
     }
     std::cout << "Please, configure rings. Enter 3 alphabetic chars from 'A' to 'Z'. Upper or lowercase accepted." << std::endl;
 
