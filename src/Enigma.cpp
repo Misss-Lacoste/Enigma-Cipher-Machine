@@ -167,10 +167,10 @@ void Enigma::advanceRotors(std::array<Rotor, 3> &rotors, int &MovingsCount)
 
 void Enigma::applyRingSettings(std::array<Rotor, 3> &rotors) {
     /*for (auto i = 0; i < 3; i++) {
-		rotors[i].ringApply(rotors[i].ring);
+		rotors[i].RingConfig(rotors[i].ring);
 	}*/
 	for (auto& rotor : rotors) {
-        rotor.ringApply(rotor.ring);
+        rotor.RingConfig(rotor.ring);
     }
 }
 
