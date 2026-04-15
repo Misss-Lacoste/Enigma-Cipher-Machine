@@ -1,0 +1,25 @@
+    Enigma (from Ancient Greek αἴνιγμα, meaning "mystery") was a portable encryption machine used by the German army to encrypt and decrypt 
+secret messages. Enigma was used in commercial and military communications around the world since the 1920s, but it gained widespread use in 
+Nazi Germany during World War II.
+	Like other rotary machines, the Enigma consisted of a combination of mechanical and electrical systems. The mechanical part included a 
+keyboard, a set of rotating discs — the rotors — which were arranged along and adjacent to the shaft, and a step mechanism moving
+one or more rotors with each keypress. The electrical part, in turn, consisted of an electrical circuit connecting between the keyboard, 
+the switch panel, the light bulbs and the rotors (sliding contacts were used to connect the rotors), and when you press letters, the 
+corresponding light bulbs light up. 
+    Rotors - the heart of the Enigma. Each rotor was a disk of approximately 10 cm in diameter with spring-loaded pin contacts on the right side 
+rotor, located around the circumference. Pin and flat contacts corresponded to letters in the alphabet - contained an alphabet ring - 
+(usually it was 26 letters from A to Z). Rotors implement a cipher of substitution. For example, the contact responsible for the letter E could be
+connected to the contact of the letter T on the other side of the rotor. But when using several rotors in a bundle (usually three), due to their 
+constant movement, a more reliable cipher is obtained.
+    The reflector is the element following the last rotor, connecting the contacts of the last rotor in pairs, switching the current through the 
+rotors in the opposite direction, but along a different route. The switchboard (Steckerbrett) allows the operator to vary the wire connections. 
+The switchboard played a significant role in complicating the encryption of the machine, even more so than the introduction of an additional rotor.
+The wire on the switchboard connected the letters in pairs, for example, "E" and "Q" could be connected together. The effect was to rearrange 
+these letters before and after the signal passed through the rotors. For example, when the operator pressed "E", the signal was sent to "Q", and 
+only then to the input rotor, such as T.
+    The Enigma transformation for each letter can be defined mathematically as a result of permutations. As an example, consider a three-rotor 
+army device. Let P denote the switch panel, U denote the reflector, and L, M, R denote the actions of the left, middle, and right rotors, 
+respectively. Then the encryption E can be expressed as E= P * R * M * L * U * L-1 * M-1 * R-1 *P-1 . After each key press, the rotor moves, 
+changing the transformation. For example, if the right rotor R rotates i positions, the transformation pi*R*p-i, where p is a cyclic permutation 
+going from "A" to "B", from "B" to "C", and so on. Similarly, the middle and left rotor can be denoted as "M" and "L", producing 
+j and k rotations respectively.
