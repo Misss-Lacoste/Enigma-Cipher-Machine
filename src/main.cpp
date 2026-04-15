@@ -7,7 +7,7 @@
 #include <fstream>
 
 void showEnigmaInfo() {
-    std::ifstream file("enigma_info_eng.txt");
+    std::ifstream file("../data/enigma_info_eng.txt");
     std::string line;
 
     while (std::getline(file, line)) {
@@ -21,7 +21,7 @@ void showEnigmaInfo() {
 }
 
 void showAttackMethods() {
-	std::ifstream file("crib_attack.txt");
+	std::ifstream file("../data/crib_attack.txt");
     std::string line;
 
     while (std::getline(file, line)) {
@@ -35,7 +35,7 @@ void showAttackMethods() {
 }
 
 void Help() {
-	std::ifstream file("help.txt");
+	std::ifstream file("../data/help.txt");
 	std::string line;
 
 	while (std::getline(file, line)) {
@@ -90,7 +90,7 @@ int main() {
 				enigma.start();
 				std::cout << "To continue encrypting press 'Y', to stop press 'N': ";
 				std::cin >> UserInput; //
-				std::cin.ignore();
+				//std::cin.ignore();
 				std::cout << std::endl;
 			} while (UserInput == 'Y' || UserInput == 'y');
 				break;
