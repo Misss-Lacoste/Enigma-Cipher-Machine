@@ -1,0 +1,39 @@
+Welcome! This is Help Window for Enigma Cipher Machine!
+
+Enigma greets you with the messages and the following menu:
+*Enigma Options*"
+"1. Encrypt the message."
+"2. Decrypt the message."
+"3. Look at the Enigma Historical Information."
+"4. Study attack methods."
+"5. Help."
+"6. Exit."
+
+At the beginning of work you can choose any number to
+start working with different aspects of Enigma.
+
+1. Encryption. 
+* You will recieve a message asking you to configure rotors.
+It means, you have to enter different numbers 1-5 symbolizing the unique "names" of the rotors.
+If you are mistaken or misspelled, you will ll recieve an error message and will have to start 
+configuring rotors again.
+* After setting up rotors, you will have to configure rings. Enter 3 alphabetic chars from 'A' to 'Z'. 
+Upper or lowercase accepted. In case of an input mistake, the warning will be thrown.
+* Afterwards, you will have an opportunity to set up a plugboard or (in german) Steckerbrett. It is optional.
+If you desired to configure it, enter no more than 13 pairs of different latin letters, i.e. ML, RT, etc.
+* After finishing settings of Enigma, enter the secret ,essage you want to encrypt. 
+It is possible to write a long text with spaces.
+* To finish working with Enigma press 'Enter'.
+
+2. Decryption.
+
+3. Enigma Historical Information.
+You will recieve a file with interesting information and histoeical facts about Enigma.
+
+4. Study attack methods.
+
+5. Help.
+You will see the current manual.
+
+6. Exit.
+You will stop the Enigma Cipher Machine.
