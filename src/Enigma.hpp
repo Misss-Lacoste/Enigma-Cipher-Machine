@@ -23,6 +23,7 @@ public:
     bool input(int);
     bool Rings(std::string &);
     void encipher(std::array<Rotor, 3> &, Reflector &, Steckerbrett &, char &, int &);
+    bool decrypt(std::array<Rotor, 3> &rotors, Reflector &reflector, Steckerbrett &steckerbrett, std::string &message, int &movingsCount);
     int start();
 };
 
