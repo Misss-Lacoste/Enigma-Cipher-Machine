@@ -10,6 +10,15 @@
 #include "Steckerbrett.hpp"
 
 int Enigma::start() {
+    char mode;
+    std::cout << "Choose mode: 'E' for encryption, 'D' for decryption: ";
+    std::cin >> mode;
+
+    if(mode != 'E' && mode != 'e' && mode != 'D' && mode != 'd') {
+        std::cerr << "Invalid mode. Exiting.\n";
+        return EXIT_FAILURE;
+    }
+
     std::array<Rotor, 3> rotors;
     std::array<int, 3> rotorsID = {0, 0, 0};
     std::cout << "Please, configure 3 rotors from '1' to '5'. Have to put different ones." << std::endl;
@@ -53,28 +62,46 @@ int Enigma::start() {
 	Reflector reflector;
     std::string message;
     int MovingsCount = 0;
-    std::cout << "Please, enter the secret message: ";
+    
+    if (mode == 'E' || mode == 'e') {
+        std::cout << "Please, enter the secret message: ";
+        std::cin.ignore();
+        std::getline(std::cin, message);
+        std::transform(message.begin(), message.end(), message.begin(), ::toupper);
 
-	if (!(userSteckInput == 'y' || userSteckInput == 'Y')) {
-		std::cin.ignore();
-	}
-	std::getline(std::cin, message);
-    std::transform(message.begin(), message.end(), message.begin(), ::toupper);
-
-	for (size_t i = 0; i < message.length(); ++i) {
-    char& eachCharacter = message[i];  //ссылкa на символ по индексу i
-
-    if (eachCharacter >= 'A' && eachCharacter <= 'Z') {
-        encipher(rotors, reflector, Steckerbrett, eachCharacter, MovingsCount);
+        for (size_t i = 0; i < message.length(); i++) {
+            char& eachCharacter = message[i];  //ссылкa на символ по индексу i
+            if (eachCharacter >= 'A' && eachCharacter <= 'Z') {
+                encipher(rotors, reflector, Steckerbrett, eachCharacter, MovingsCount);
     	}
 	}
-
     std::cout << "Your ciphered message is: " << message << std::endl;
+    } else {
+        std::cout << "Please, enter the encrypted message (your ciphertext): ";
+        std::cin.ignore();
+        std::getline(std::cin, message);
+        std::transform(message.begin(), message.end(), message.begin(), ::toupper);
+
+        decrypt(rotors, reflector, Steckerbrett, message, MovingsCount);
+        std::cout << "Your decrypted message is: " << message << std::endl;
+    }
+
     std::ofstream result;
     result.open("SecretMessage.txt");
     result << message;
     result.close();
     return EXIT_SUCCESS;
+}
+
+bool Enigma::decrypt(std::array<Rotor, 3> &rotors, Reflector &reflector, Steckerbrett &steckerbrett, std::string &message, int &movingsCount) {
+    for (size_t i = 0; i < message.length(); ++i) {
+        char& eachCharacter = message[i];
+
+        if (eachCharacter >= 'A' && eachCharacter <= 'Z') {
+            encipher(rotors, reflector, steckerbrett, eachCharacter, movingsCount);
+        }
+    }
+    return true;
 }
 
 bool Enigma::input(int choice) {
