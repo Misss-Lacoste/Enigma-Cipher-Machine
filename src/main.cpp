@@ -51,12 +51,11 @@ void Help() {
 void showMenu() {
 	std::cout << "\n*********************************************\n";
 	std::cout << "Enigma Options.\n";                           
-	std::cout << "1. Encrypt the message.\n";
-	std::cout << "2. Decrypt the message.\n";
-	std::cout << "3. Look at the Enigma Historical Information.\n";
-	std::cout << "4. Study attack methods.\n";
-	std::cout << "5. Help.\n";
-	std::cout << "6. Exit.\n";
+	std::cout << "1. Ciphering.\n";
+	std::cout << "2. Look at the Enigma Historical Information.\n";
+	std::cout << "3. Study attack methods.\n";
+	std::cout << "4. Help.\n";
+	std::cout << "5. Exit.\n";
 	std::cout << "*********************************************\n";
 }
 
@@ -96,24 +95,18 @@ int main() {
 				break;
 		}
 		case 2: {
-			std::cout << "Decryption is still coding.\n";
-			std::cout << "Press 'Enter' to go back to the main menu...";
-			std::cin.get();
-			break;
-		}
-		case 3: {
 			showEnigmaInfo();
 			break;
 		}
-		case 4: {
+		case 3: {
 			showAttackMethods();
 			break;
 		}
-		case 5: {
+		case 4: {
 			Help();
 			break;
 		}
-		case 6: {
+		case 5: {
 			amazingEffect("See you later!");
 			break;
 		}
@@ -122,7 +115,7 @@ int main() {
 			break;
 		}
 	}
-} while (choice != 6);
+} while (choice != 5);
 
 amazingEffect("Press 'Enter' to stop the Machine.");
 std::cin.get();
