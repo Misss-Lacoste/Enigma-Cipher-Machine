@@ -13,7 +13,6 @@ int Enigma::start() {
     char mode;
     std::cout << "Choose mode: 'E' for encryption, 'D' for decryption: ";
     std::cin >> mode;
-
     if(mode != 'E' && mode != 'e' && mode != 'D' && mode != 'd') {
         std::cerr << "Invalid mode. Exiting.\n";
         return EXIT_FAILURE;
@@ -37,22 +36,24 @@ int Enigma::start() {
     for (auto i = 0; i < 3; i++) {
         rotors[i].ring = ringSettings[0][i];
     }
-    
+    applyRingSettings(rotors);
+
     Steckerbrett Steckerbrett;
 	char userSteckInput;
-	//bool correctInput = false;
 	while(true) {
 		std::cout << "Configuration of the steckerbrett is optional. Press 'Y' or 'y' to adjust it. Press 'N' or 'n' to skip: ";
 		std::cin >> userSteckInput;
+
+        std::string temp; //safely clear the buffer after operator >>
+        std::getline(std::cin, temp);
+
 		if (userSteckInput == 'Y' || userSteckInput == 'y') {
         	if (Steckerbrett.SteckerbrettConfiguration()) {
             	return EXIT_FAILURE;
         	}
-			//correctInput = true;
 			break;
 		} else if (userSteckInput == 'n' || userSteckInput == 'N') {
 			std::cout << "Continue without steckerbrett configuration." << std::endl;
-			//correctInput = true;
 			break;
 		} else {
 			std::cerr << "Misspelled. ";
@@ -65,7 +66,7 @@ int Enigma::start() {
     
     if (mode == 'E' || mode == 'e') {
         std::cout << "Please, enter the secret message: ";
-        std::cin.ignore();
+        //std::cin.ignore();
         std::getline(std::cin, message);
         std::transform(message.begin(), message.end(), message.begin(), ::toupper);
 
@@ -73,15 +74,14 @@ int Enigma::start() {
             char& eachCharacter = message[i];  //ссылкa на символ по индексу i
             if (eachCharacter >= 'A' && eachCharacter <= 'Z') {
                 encipher(rotors, reflector, Steckerbrett, eachCharacter, MovingsCount);
-    	}
-	}
-    std::cout << "Your ciphered message is: " << message << std::endl;
+    	    }
+	    }
+        std::cout << "Your ciphered message is: " << message << std::endl;
     } else {
         std::cout << "Please, enter the encrypted message (your ciphertext): ";
-        std::cin.ignore();
+        //std::cin.ignore();
         std::getline(std::cin, message);
         std::transform(message.begin(), message.end(), message.begin(), ::toupper);
-
         decrypt(rotors, reflector, Steckerbrett, message, MovingsCount);
         std::cout << "Your decrypted message is: " << message << std::endl;
     }
@@ -96,7 +96,6 @@ int Enigma::start() {
 bool Enigma::decrypt(std::array<Rotor, 3> &rotors, Reflector &reflector, Steckerbrett &steckerbrett, std::string &message, int &movingsCount) {
     for (size_t i = 0; i < message.length(); ++i) {
         char& eachCharacter = message[i];
-
         if (eachCharacter >= 'A' && eachCharacter <= 'Z') {
             encipher(rotors, reflector, steckerbrett, eachCharacter, movingsCount);
         }
@@ -164,7 +163,7 @@ void Enigma::encipher(std::array<Rotor, 3> &rotors, Reflector &reflector, Stecke
 
     advanceRotors(rotors, MovingsCount); //step2: rotation of rotors
 
-    applyRingSettings(rotors); //step3
+    //applyRingSettings(rotors); //step3
 
     forwardPassThroughRotors(rotors, eachCharacter); //step4: right to left pass ('s' aka straight)
 
@@ -202,7 +201,7 @@ void Enigma::applyRingSettings(std::array<Rotor, 3> &rotors) {
 }
 
 void Enigma::forwardPassThroughRotors(std::array<Rotor, 3> &rotors, char &character) {
-    for (int i = 2; i >= 0; --i) {
+    for (int i = 2; i >= 0; i--) {
         rotors[i].substitute(character, 's');
     }
 }
