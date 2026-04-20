@@ -4,10 +4,33 @@
 #include <array>
 #include <algorithm>
 #include <cctype>
+#include <ctime>
+#include <iomanip>
+#include <sstream>
 #include "Enigma.hpp"
 #include "Reflector.hpp"
 #include "Rotor.hpp"
 #include "Steckerbrett.hpp"
+
+//get current date and time
+std::string Enigma::getCurrentTimestamp() {
+    auto now = std::time(nullptr);
+    auto tm = *std::localtime(&now);
+    std::ostringstream oss;
+    oss << std::put_time(&tm, "%Y-%m-%d %H:%M:%S");
+    return oss.str();
+}
+
+void Enigma::saveHistoryToFile(const std::string &input, const std::string &output, const std::string &mode, const std::string &settings) {
+    std::ofstream file("Cipher_History.txt", std::ios::app);
+    file << "Date: " << getCurrentTimestamp() << "\n";
+    file << "Mode: " << mode << "\n";
+    file << "Settings: " << settings << "\n";
+    file << "Input:  " << input << "\n";
+    file << "Output: " << output << "\n";
+    file << "----------------------------------------\n\n";
+    file.close();
+}
 
 int Enigma::start() {
     char mode;
@@ -40,17 +63,20 @@ int Enigma::start() {
 
     Steckerbrett Steckerbrett;
 	char userSteckInput;
+    bool steckerUsed = false;
+
 	while(true) {
 		std::cout << "Configuration of the steckerbrett is optional. Press 'Y' or 'y' to adjust it. Press 'N' or 'n' to skip: ";
 		std::cin >> userSteckInput;
 
-        std::string temp; //safely clear the buffer after operator >>
+        std::string temp; //safely clear the buffer after operator '>>'
         std::getline(std::cin, temp);
 
 		if (userSteckInput == 'Y' || userSteckInput == 'y') {
         	if (Steckerbrett.SteckerbrettConfiguration()) {
             	return EXIT_FAILURE;
         	}
+            steckerUsed = true;
 			break;
 		} else if (userSteckInput == 'n' || userSteckInput == 'N') {
 			std::cout << "Continue without steckerbrett configuration." << std::endl;
@@ -60,14 +86,25 @@ int Enigma::start() {
 		}
 	}
 
+    std::string settingsLog = "Rotors: " + std::to_string(rotorsID[0]) + "-" + std::to_string(rotorsID[1]) + "-" + std::to_string(rotorsID[2]) + " | Rings: " + ringSettings[0] + 
+    " | Plugboard: " + (steckerUsed ? "Used" : "Not used");
+
 	Reflector reflector;
     std::string message;
     int MovingsCount = 0;
+
+    std::string operationMode;
+    if (mode == 'E' || mode == 'e') {
+        operationMode = "ENCRYPT";
+    } else {
+        operationMode = "DECRYPT";
+    }
     
     if (mode == 'E' || mode == 'e') {
         std::cout << "Please, enter the secret message: ";
         //std::cin.ignore();
         std::getline(std::cin, message);
+        std::string originalInput = message;
         std::transform(message.begin(), message.end(), message.begin(), ::toupper);
 
         for (size_t i = 0; i < message.length(); i++) {
@@ -77,14 +114,19 @@ int Enigma::start() {
     	    }
 	    }
         std::cout << "Your ciphered message is: " << message << std::endl;
+        saveHistoryToFile(originalInput, message, operationMode, settingsLog);
     } else {
         std::cout << "Please, enter the encrypted message (your ciphertext): ";
         //std::cin.ignore();
         std::getline(std::cin, message);
+        std::string originalInput = message;
         std::transform(message.begin(), message.end(), message.begin(), ::toupper);
         decrypt(rotors, reflector, Steckerbrett, message, MovingsCount);
         std::cout << "Your decrypted message is: " << message << std::endl;
+        saveHistoryToFile(originalInput, message, operationMode, settingsLog);
     }
+
+    std::cout << "Ciper history saved to Cipher_History.txt\n";
 
     std::ofstream result;
     result.open("SecretMessage.txt");
@@ -94,7 +136,7 @@ int Enigma::start() {
 }
 
 bool Enigma::decrypt(std::array<Rotor, 3> &rotors, Reflector &reflector, Steckerbrett &steckerbrett, std::string &message, int &movingsCount) {
-    for (size_t i = 0; i < message.length(); ++i) {
+    for (size_t i = 0; i < message.length(); i++) {
         char& eachCharacter = message[i];
         if (eachCharacter >= 'A' && eachCharacter <= 'Z') {
             encipher(rotors, reflector, steckerbrett, eachCharacter, movingsCount);
@@ -147,7 +189,7 @@ bool Enigma::Rings(std::string &ringSettings) {
 		std::cout << "Warning. Error! Expected " << ringNumber<< " ring settings, but entered " << ringSettings.length() << "." << std::endl;
 		return true;
 	}
-	for (size_t i = 0; i < ringSettings.length(); ++i) {
+	for (size_t i = 0; i < ringSettings.length(); i++) {
         char c = ringSettings[i];
         if (!std::isalpha(c) || !std::isupper(c)) {
             std::cout << "Warning. Error! Character at position " << (i + 1) << " ('" << c << "') is not correct alphabetic character (A-Z)." << std::endl;
@@ -163,7 +205,7 @@ void Enigma::encipher(std::array<Rotor, 3> &rotors, Reflector &reflector, Stecke
 
     advanceRotors(rotors, MovingsCount); //step2: rotation of rotors
 
-    //applyRingSettings(rotors); //step3
+    //applyRingSettings(rotors); //step3 but not here,  search somewhere upper in the code
 
     forwardPassThroughRotors(rotors, eachCharacter); //step4: right to left pass ('s' aka straight)
 
