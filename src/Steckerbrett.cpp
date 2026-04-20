@@ -27,7 +27,7 @@ bool Steckerbrett::lengthCheck() {
 }
 
 bool Steckerbrett::OkInput() {
-    for (auto i = 0; i < SteckerbrettLetters.length(); ++i) {
+    for (auto i = 0; i < SteckerbrettLetters.length(); i++) {
         char c = SteckerbrettLetters[i];
         if (!std::isupper(c)) {
           std::cout <<"Warning. Error! Not all of your characters are alphabetical ones. Allowed only chars from 'A' to 'Z'\n.";
@@ -39,7 +39,7 @@ bool Steckerbrett::OkInput() {
 
 bool Steckerbrett::SteckerbrettConfiguration() {
     std::cout << "Please, enter digraph pairs (pairs of letters) as 'ML PI TA' etc., for example." << std::endl;
-    std::cin.ignore();
+    //std::cin.ignore();
 
     std::getline(std::cin, SteckerbrettLetters);
 
@@ -61,7 +61,7 @@ bool Steckerbrett::SteckerbrettConfiguration() {
     return false;
 }
 
-void Steckerbrett::substitute(char &symbol) {
+/*void Steckerbrett::substitute(char &symbol) {
     for (auto mapIterator = Steckerbrett.begin(); mapIterator != Steckerbrett.end(); mapIterator++) {
     auto const &pair = *mapIterator;
     if (pair.first == symbol) {
@@ -73,10 +73,10 @@ void Steckerbrett::substitute(char &symbol) {
         break;
     }
     }
-}
-/*void Steckerbrett::substitute(char &symbol) {
+}*/
+void Steckerbrett::substitute(char &symbol) {
     auto it = Steckerbrett.find(symbol);
     if (it != Steckerbrett.end()) {
         symbol = it->second;
     }
-}*/
+}
