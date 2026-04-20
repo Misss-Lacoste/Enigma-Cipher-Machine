@@ -15,6 +15,8 @@ private:
     void forwardPassThroughRotors(std::array<Rotor, 3>& rotors, char& character);
     void reversePassThroughRotors(std::array<Rotor, 3>& rotors, char& character);
     bool selectRotors(std::array<int, 3>& rotorsID);
+    void saveHistoryToFile(const std::string& input, const std::string& output, const std::string& mode, const std::string& settings);
+    std::string getCurrentTimestamp();
 public:
     std::string ringSettings[3];
     bool defaultSettings();
