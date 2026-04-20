@@ -28,7 +28,7 @@ It is possible to write a long text with spaces.
 2. Decryption.
 
 3. Enigma Historical Information.
-You will recieve a file with interesting information and histoeical facts about Enigma.
+You will recieve a file with interesting information and historical facts about Enigma.
 
 4. Study attack methods.
 
