@@ -3,7 +3,6 @@
 
 #include <string>
 #include <vector>
-#include <map>
 
 struct AnalysisResult {
     bool success;
