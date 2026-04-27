@@ -8,6 +8,7 @@
 //Initial alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 //https://www.codesandciphers.org.uk/enigma/index.htm
 //https://www.codesandciphers.org.uk/enigma/rotorspec.htm
+//https://www.101computing.net/enigma-crib-analysis/
 
 constexpr std::array<std::string_view, 5> rotors = {
     "EKMFLGDQVZNTOWYHXUSPAIBRCJ",  //official configurations
