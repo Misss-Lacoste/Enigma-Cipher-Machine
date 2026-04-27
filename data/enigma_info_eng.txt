@@ -23,3 +23,4 @@ respectively. Then the encryption E can be expressed as E= P * R * M * L * U * L
 changing the transformation. For example, if the right rotor R rotates i positions, the transformation pi*R*p-i, where p is a cyclic permutation 
 going from "A" to "B", from "B" to "C", and so on. Similarly, the middle and left rotor can be denoted as "M" and "L", producing 
 j and k rotations respectively.
+--------------------------------------------------------------------------------------------------------------------------------------------------
