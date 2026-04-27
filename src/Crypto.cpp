@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <iomanip>
 #include <cctype>
+#include <map>
 
 void CryptoAnalyzer::performFrequencyAnalysis(const std::string &ciphertext) {
     std::map<char, int> freq;
