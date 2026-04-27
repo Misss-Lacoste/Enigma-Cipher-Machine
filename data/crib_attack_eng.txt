@@ -1,0 +1,109 @@
+ ------------------------------------------------------------
+          ENIGMA CRYPTOANALYSIS MODULE: GUIDE               
+ ------------------------------------------------------------
+Welcome to the educational cryptoanalysis module!
+This module presents the methods that enabled the cracking 
+of the "Enigma" during World War II at Bletchley Park.
+
+You will learn the principles of the Enigma cipher 
+machine, the techniques and strategies used to decrypt it, 
+and the role these efforts played in the historical context.
+
+ ------------------------------------------------------------
+ AVAILABLE ANALYSIS METHODS:                                
+ ------------------------------------------------------------
+[1] Frequency Analysis
+[2] Checking the "x != E(x)" Property
+[3] Finding Positions for Crib Attack
+
+------------------------------------------------------------
+ 1. FREQUENCY ANALYSIS                                    
+------------------------------------------------------------
+This method helps determine the frequency of occurrence 
+of individual letters in the encrypted text. This aids in 
+analyzing the cipher and identifying its characteristics 
+for further decryption.
+
+The histogram visually demonstrates the distribution of 
+letter frequencies, making it easier to compare with 
+frequency characteristics of natural languages.
+
+In ordinary text, letters are distributed unevenly. The most 
+common letters in German and English are 'E', 'N', 'I', 'S', 
+and 'R'. If the cipher is strong, the letter distribution 
+should be close to uniform. Significant deviations may indicate 
+weak machine settings or that the message is short.
+
+Compare the resulting graph with reference frequencies of the 
+German language from the 1940s. If the distribution is uniform, 
+this indicates the use of a high-quality polyalphabetic cipher.
+
+------------------------------------------------------------
+ 2. THE "LETTER DOES NOT ENCRYPT TO ITSELF" PROPERTY
+------------------------------------------------------------
+The fundamental principle of Enigma is simple: pressing the 
+'A' key never lights up as 'A' on the lamp panel. This occurs 
+due to the reflector and the double passage of the electrical 
+signal.
+
+To verify the device's operation, enter a pair 
+"Plaintext <-> Ciphertext". If at least one letter matches 
+at the same position, this is not Enigma output or an error 
+was made during input/configuration.
+
+Example of correct pair: RITA -> LBRO (no matches)
+Example of error:        RITA -> RFWQ (R -> R incorrect encoding!)
+
+------------------------------------------------------------
+ 3. CRIB ATTACK METHOD AND LOOP SEARCH
+------------------------------------------------------------
+Historical context: cryptanalysts were familiar with standard 
+phrases in German military messages. These recognizable fragments 
+are called "cribs".
+
+Program algorithm:
+1. The encrypted text is analyzed to find possible positions 
+   for the start of the crib.
+2. Positions where letters from the crib match ciphertext 
+   letters at the same positions are excluded, as this 
+   contradicts the x != E(x) principle.
+3. The remaining positions are considered potential locations 
+   for forming "loops", which were used in the electromechanical 
+   "Bombe" machine to test various rotor settings.
+
+The following data is required for input:
+   * Ciphertext: complete encrypted text consisting of letters A-Z 
+     with no spaces.
+   * Crib: assumed fragment of the original text, example, WETTER.
+
+ Result: a list of indices where the word could theoretically be 
+   located. These positions should be used in the emulator for 
+   manual adjustment of rings and initial parameters.
+
+------------------------------------------------------------
+ HISTORICAL EXAMPLES OF CRIBS
+------------------------------------------------------------
+* WETTER                    -> weather report (daily!)
+* KEINEBESONDERENEREIGNISSE -> "nothing special" (filler phrase)
+* ANXDIEGRUPPE              -> "to the group command..." (X = space)
+* HEILHITLER                -> mandatory greeting at the end
+* XREPORTX                  -> start/end message markers
+* EINSZWEIDREI              -> numbers spelled out (connection check)
+------------------------------------------------------------
+ IMPORTANT INPUT RULES
+------------------------------------------------------------
+1. Use uppercase Latin letters (A-Z).
+2. Spaces, digits, and punctuation marks are ignored or can 
+   be manually removed before input.
+3. For Crib Attack, the crib length must be strictly less than 
+   the ciphertext length.
+4. If the program responds "No positions found" - possibly the 
+   crib is incorrect or the text is too short.
+5. Complete enumeration of settings (5 rotors * 26^3 positions * 
+   * 26^3 rings) requires billions of years on a regular PC. 
+   This module demonstrates cracking principles, not automatic
+   brute force.
+------------------------------------------------------------
+Educational goal: understanding vulnerabilities of 
+polyalphabetic ciphers and historical methods of cryptoanalysis.
+------------------------------------------------------------
