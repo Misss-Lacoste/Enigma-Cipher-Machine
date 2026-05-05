@@ -43,3 +43,12 @@
 #ciphered message
 SecretMessage.txt
 Cipher_History.txt
+
+#python virtual environment
+enigma_env/
+venv/
+
+#python cache
+__pycache__/
+*.pyc
+*.pyo
