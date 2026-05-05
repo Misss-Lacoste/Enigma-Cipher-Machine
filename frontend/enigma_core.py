@@ -1,0 +1,155 @@
+import subprocess
+import os
+import re
+import threading
+import queue
+import time
+
+class EnigmaBackend:
+    def __init__(self, exe_path):
+        self.exe_path = exe_path
+        self.process = None
+        self.output_queue = queue.Queue()
+        self.reader_thread = None
+        self._start_process()
+
+    def _start_process(self):
+        if not os.path.exists(self.exe_path):
+            raise FileNotFoundError(f"Исполняемый файл backend'а не найден: {self.exe_path}")
+        
+        backend_dir = os.path.dirname(self.exe_path)
+        
+        self.process = subprocess.Popen(
+            [self.exe_path],
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            bufsize=1,
+            cwd=backend_dir
+        )
+        
+        self.reader_thread = threading.Thread(target=self._read_output_loop, daemon=True)
+        self.reader_thread.start()
+
+    def _read_output_loop(self):
+        try:
+            for line in iter(self.process.stdout.readline, ''):
+                if line:
+                    self.output_queue.put(line)
+        except Exception:
+            pass
+
+    def _send_input(self, text):
+        if self.process and self.process.stdin:
+            try:
+                self.process.stdin.write(text + "\n")
+                self.process.stdin.flush()
+            except BrokenPipeError:
+                print("Процесс завершился аварийно.")
+
+    def _wait_for_prompt(self, stop_phrases, timeout=10.0):
+        collected_lines = []
+        start_time = time.time()
+        
+        while time.time() - start_time < timeout:
+            try:
+                line = self.output_queue.get(timeout=0.1)
+                collected_lines.append(line)
+                
+                for phrase in stop_phrases:
+                    if phrase in line:
+                        return "".join(collected_lines)
+                        
+            except queue.Empty:
+                continue
+        
+        return "".join(collected_lines) + "\n[Перезагрузка]"
+
+    def encrypt(self, message, rotors, rings):
+        r1, r2, r3 = rotors
+        
+        inputs = [
+            "1",       #menu: ciphering
+            "E",       #mode: encrypt
+            str(r1),   #rotor 1
+            str(r2),   #rotor 2
+            str(r3),   #rotor 3
+            rings,     #rings
+            "N",       #skip Steckerbrett
+            message,   #message
+            "N"        #stop loop
+        ]
+        
+        for inp in inputs:
+            self._send_input(inp)
+            
+        output = self._wait_for_prompt(["Для продолжения процесса шифрования нажмите"])
+        
+        match = re.search(r"Your ciphered message is:\s*(.+)", output)
+        if match:
+            return match.group(1).strip()
+        
+        return f"Вывод отладки:\n{output}"
+
+    def decrypt(self, ciphertext, rotors, rings):
+        r1, r2, r3 = rotors
+        
+        inputs = [
+            "1",
+            "D",  #decrypt
+            str(r1),
+            str(r2),
+            str(r3),
+            rings,
+            "N",
+            ciphertext,
+            "N"
+        ]
+        
+        for inp in inputs:
+            self._send_input(inp)
+            
+        output = self._wait_for_prompt(["Для продолжения процесса шифрования нажмите"])
+        
+        match = re.search(r"Your decrypted message is:\s*(.+)", output)
+        if match:
+            return match.group(1).strip()
+            
+        return f"Вывод отладки:\n{output}"
+
+    def get_info_file(self, filename):
+        base_dir = os.path.dirname(self.exe_path)
+        data_dir = os.path.join(os.path.dirname(base_dir), "data")
+        filepath = os.path.join(data_dir, filename)
+        
+        try:
+            with open(filepath, 'r', encoding='utf-8') as f:
+                return f.read()
+        except FileNotFoundError:
+            return f"File '{filename}' не найдено в папке 'data'.\nПожалуйста, убедитесь, что файлы существуют."
+
+    def run_crypto_analysis(self, sub_choice, text1, text2=""):
+        inputs = [
+            "5",          #menu: cryptoanalysis
+            str(sub_choice),
+            text1,
+            text2,
+            ""            #press 'enter' to return
+        ]
+        
+        for inp in inputs:
+            self._send_input(inp)
+            
+        output = self._wait_for_prompt(["нажмите 'Enter', чтобы вернуться на главное меню."])
+        
+        return output
+
+    def close(self):
+        if self.process:
+            try:
+                self._send_input("6") #exit
+                self.process.stdin.close()
+                self.process.wait(timeout=2)
+            except:
+                self.process.terminate()
