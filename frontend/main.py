@@ -211,6 +211,15 @@ class EnigmaGUI(QMainWindow):
         layout.addLayout(right_panel, 2)
         return widget
 
+    def _check_message_validity(self, text):
+        invalid_chars = set()
+        for char in text:
+            if char == ' ':
+                continue
+            if not ('A' <= char <= 'Z' or 'a' <= char <= 'z'):
+                invalid_chars.add(char)
+        return len(invalid_chars) == 0, list(invalid_chars)
+
     def encrypt(self):
         self._process_operation("encrypt")
 
@@ -234,12 +243,25 @@ class EnigmaGUI(QMainWindow):
             rings = self.rings.text().upper()
             if len(rings) != 3 or not rings.isalpha():
                 QMessageBox.warning(self, "Ошибка конфигурации!", 
-                    "Следует ввести ровно 3 кольцевые настройки (буквы A-Z)!")
+                    "Следует ввести ровно 3 кольцевые настройки (буквы A-Z)!\n"
+                    "Символы кириллицы, цифры и иные занки запрещены.")
+                return
+
+            if not all(('A' <= c <= 'Z' or 'a' <= c <= 'z') for c in rings):
+                QMessageBox.warning(self, "Ошибка конфишурации!", 
+                    "Внимание! Кольцевые настройки должны содеражть только буквы латинского алфавита (A-Z).\n"
+                    "Символы кириллицы, цифры и иные занки запрещены.")
                 return
 
             text = self.input_text.toPlainText()
             if not text.strip():
                 QMessageBox.warning(self, "Ошибка ввода!", "Пожалуйста, введите Ваш текст.")
+                return
+
+            if not all((c == ' ' or 'A' <= c <= 'Z' or 'a' <= c <= 'z') for c in text):
+                QMessageBox.warning(self, "Некорректный ввод!", 
+                    "Внимание! Разрешены только символы латинского алфавита и пробелы по желанию.\n"
+                    "Символы кириллицы, цифры и иные занки запрещены.")
                 return
 
             self.status_label.setText("Обработка...")
