@@ -2,7 +2,7 @@ CXX       := g++
 CXXFLAGS  := -std=c++17 -Wall -Wextra -O2 -I backend
 LDFLAGS   := -pthread
 
-TARGET    := backend/enigma_app
+TARGET    := backend/enigma_backend.exe
 
 SRCS      := backend/main.cpp backend/Enigma.cpp backend/Rotor.cpp backend/Reflector.cpp backend/Crypto.cpp backend/Steckerbrett.cpp
 OBJS      := $(SRCS:.cpp=.o)
@@ -20,6 +20,6 @@ clean:
 
 run: $(TARGET)
 	@echo "Launching from backend/ to resolve ../data/ paths correctly..."
-	cd backend && ./enigma_app
+	cd backend && ./enigma_backend.exe
 
 .PHONY: all clean run
