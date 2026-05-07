@@ -72,7 +72,8 @@ class EnigmaGUI(QMainWindow):
         
         #состояние
         self.status_label = QLabel("Готово к работе")
-        self.status_label.setStyleSheet("QLabel { background-color: #f0f0f0; padding: 5px; font-weight: bold; }")
+        self.status_label.setFont(QFont("calibri", 8))
+        self.status_label.setStyleSheet("QLabel { background-color: #f0f0f0; padding: 5px; }")
         main_layout.addWidget(self.status_label)
 
     def create_cipher_tab(self):
@@ -330,13 +331,15 @@ class EnigmaGUI(QMainWindow):
 
         except Exception as e:
             self.output_text.setText(f"Error 500: ошибка связи с бэкендом:\n{str(e)}")
-            self.status_label.setText("✗ Ошибка!")
+            self.status_label.setText("Ошибка!")
 
     def clear(self):
         self.typewriter_timer.stop()
         self.input_text.clear()
         self.output_text.clear()
         self.status_label.setText("Готово к работе!")
+
+    
 
     def start_typewriter_effect(self, text):
         self.typewriter_timer.stop()
@@ -391,15 +394,21 @@ class EnigmaGUI(QMainWindow):
         
         #подпапки для криптоанализа
         crypto_tabs = QTabWidget()
+        crypto_tabs.tabBar().setFont(QFont("Times New Roman", 11))
+        
+        text_font  = QFont("Times New Roman", 11)
         
         #1.frequency analysis
         tab_freq = QWidget()
         layout_freq = QVBoxLayout(tab_freq)
-        layout_freq.addWidget(QLabel("<b>Частотный Анализ</b>"))
-        layout_freq.addWidget(QLabel("Введите шифртекст для анализа буквенных частот:"))
+
+        lbl2 = QLabel("Введите шифртекст для анализа буквенных частот:")
+        lbl2.setFont(text_font)
+        layout_freq.addWidget(lbl2)
         
         input_freq = QTextEdit()
         input_freq.setMaximumHeight(150)
+        input_freq.setFont(QFont("Courier New", 11))
         input_freq.setPlaceholderText("Введите, пожалуйста, Ваш шифртекст...")
         layout_freq.addWidget(input_freq)
         
@@ -407,16 +416,16 @@ class EnigmaGUI(QMainWindow):
         btn_freq.setFont(QFont("Times New Roman", 11, QFont.Bold))
         btn_freq.setStyleSheet("""
             QPushButton {
-                background-color: #c69595;
+                background-color: #e491a6;
                 color: white;
                 padding: 10px;
                 border-radius: 5px;
             }
             QPushButton:hover { 
-                background-color: #c48d8d; 
+                background-color: #e0809a; 
             }
             QPushButton:pressed {
-                background-color: #c07777;
+                background-color: #dc6586;
             }
         """)
         layout_freq.addWidget(btn_freq)
@@ -424,7 +433,11 @@ class EnigmaGUI(QMainWindow):
         output_freq = QTextEdit()
         output_freq.setReadOnly(True)
         output_freq.setFont(QFont("Courier New", 11))
-        layout_freq.addWidget(QLabel("Result:"))
+
+        lbl3 = QLabel("Сводка анализа:")
+        lbl3.setFont(text_font)
+        layout_freq.addWidget(lbl3)
+
         layout_freq.addWidget(output_freq)
         
         def do_freq():
@@ -438,22 +451,37 @@ class EnigmaGUI(QMainWindow):
         #2.no-self-mapping
         tab_nsm = QWidget()
         layout_nsm = QVBoxLayout(tab_nsm)
-        layout_nsm.addWidget(QLabel("<b>Отсутствие шифрования буквы саму в себя</b>"))
-        layout_nsm.addWidget(QLabel("В логике 'Энигмы' буква не может шифроваться сама в себя."))
-        layout_nsm.addWidget(QLabel("Данное свойство позволяет найти потенциальную 'зацепку' (crib)."))
+
+        lbl5 = QLabel("В логике 'Энигмы' буква не может шифроваться сама в себя.")
+        lbl5.setFont(text_font)
+        layout_nsm.addWidget(lbl5)
         
-        layout_nsm.addWidget(QLabel("Исходное сообщение (crib):"))
+        lbl6 = QLabel("Данное свойство позволяет найти потенциальную 'зацепку' (crib).")
+        lbl6.setFont(text_font)
+        layout_nsm.addWidget(lbl6)
+        
+        lbl7 = QLabel("Исходное секретное сообщение:")
+        lbl7.setFont(text_font)
+        layout_nsm.addWidget(lbl7)
+
         input_plain = QLineEdit()
-        input_plain.setFont(QFont("Courier New", 12))
+        input_plain.setFont(QFont("Courier New", 11))
+        input_plain.setMinimumHeight(40)
+        input_plain.setPlaceholderText("Введите, пожалуйста, секретное сообщение...")
         layout_nsm.addWidget(input_plain)
+
+        lbl8 = QLabel("Шифртекст:")
+        lbl8.setFont(text_font)
+        layout_nsm.addWidget(lbl8)
         
-        layout_nsm.addWidget(QLabel("Шифртекст:"))
         input_cipher = QLineEdit()
-        input_cipher.setFont(QFont("Courier New", 12))
+        input_cipher.setFont(QFont("Courier New", 11))
+        input_cipher.setMinimumHeight(40)
+        input_cipher.setPlaceholderText("Введите, пожалуйста, Ваш шифртекст...")
         layout_nsm.addWidget(input_cipher)
         
         btn_nsm = QPushButton("Проверить свойство")
-        btn_nsm.setFont(QFont("Times New Roman", 11)) #, QFont.Bold
+        btn_nsm.setFont(QFont("Times New Roman", 11, QFont.Bold))
         btn_nsm.setStyleSheet("""
             QPushButton {
                 background-color: #FF9800;
@@ -473,13 +501,19 @@ class EnigmaGUI(QMainWindow):
         output_nsm = QTextEdit()
         output_nsm.setReadOnly(True)
         output_nsm.setMaximumHeight(150)
-        layout_nsm.addWidget(QLabel("Результат:"))
+        output_nsm.setFont(QFont("Courier New", 11))
+
+        lbl9 = QLabel("Сводка анализа:")
+        #lbl9.setFont(QFont("Courier New", 12)) 
+        lbl9.setFont(text_font)
+        layout_nsm.addWidget(lbl9)
+        
         layout_nsm.addWidget(output_nsm)
 
         def do_nsm():
             res = self.backend.run_crypto_analysis(2, input_plain.text(), input_cipher.text())
             output_nsm.setText(res)
-            self.status_label.setText("Проверка на потенциальное шифрование буквы саму в себя проверено!")
+            self.status_label.setText("Проверка завершена!")
 
         btn_nsm.clicked.connect(do_nsm)
         crypto_tabs.addTab(tab_nsm, "2. Отсутствие шифрования буквы саму в себя")
@@ -487,42 +521,57 @@ class EnigmaGUI(QMainWindow):
         # 3.сrib Positions
         tab_crib = QWidget()
         layout_crib = QVBoxLayout(tab_crib)
-        layout_crib.addWidget(QLabel("<b>Найти позиции 'зацепок'</b>"))
-        layout_crib.addWidget(QLabel("Найти возможные позиции, в котрых символы исходного сообщения ('зацепка') могут появиться в шифртексте."))
+
+        lbl11 = QLabel("Найти возможные позиции, в котрых символы исходного сообщения ('зацепка') могут появиться в шифртексте.")
+        lbl11.setFont(text_font)
+        layout_crib.addWidget(lbl11)
         
-        layout_crib.addWidget(QLabel("Шифртекст:"))
+        lbl12 = QLabel("Шифртекст:")
+        lbl12.setFont(text_font)
+        layout_crib.addWidget(lbl12)
+        
         input_ct = QTextEdit()
         input_ct.setMaximumHeight(100)
+        input_ct.setFont(QFont("Courier New", 11))
         input_ct.setPlaceholderText("Пожалуйста, введите шифртекст...")
         layout_crib.addWidget(input_ct)
         
-        layout_crib.addWidget(QLabel("Зацепка (известный исхлдный текст):"))
+        lbl13 = QLabel("Зацепка (известный исходный текст):")
+        lbl13.setFont(text_font)
+        layout_crib.addWidget(lbl13)
         input_crib = QLineEdit()
-        input_crib.setFont(QFont("Courier New", 12))
+        input_crib.setMinimumHeight(40)
+        input_crib.setFont(QFont("Courier New", 11))
         input_crib.setPlaceholderText("Введите потенциальную зацепку...")
         layout_crib.addWidget(input_crib)
         
         btn_crib = QPushButton("Найти позиции 'зацепок'")
-        btn_crib.setFont(QFont("Times New Roman", 11)) #, QFont.Bold
+        btn_crib.setFont(QFont("Times New Roman", 11, QFont.Bold))
         btn_crib.setStyleSheet("""
             QPushButton {
-                background-color: #c5fce1;
+                background-color: #dca1a1;
                 color: white;
                 padding: 10px;
                 border-radius: 5px;
             }
             QPushButton:hover { 
-                background-color: #bcfbdc; 
+                background-color: #d59090; 
             }
             QPushButton:pressed {
-                background-color: #95f9ca;
+                background-color: #cd7a7a;
             }
         """)
         layout_crib.addWidget(btn_crib)
         
         output_crib = QTextEdit()
         output_crib.setReadOnly(True)
-        layout_crib.addWidget(QLabel("Результат:"))
+        output_crib.setFont(QFont("Courier New", 11))
+        
+        lbl14 = QLabel("Сводка анализа:")
+        #lbl14.setFont(QFont("Courier New", 12))
+        lbl14.setFont(text_font)
+        layout_crib.addWidget(lbl14)
+        
         layout_crib.addWidget(output_crib)
 
         def do_crib():
