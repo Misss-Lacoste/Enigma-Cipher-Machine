@@ -64,7 +64,7 @@ class EnigmaBackend:
             except queue.Empty:
                 continue
         
-        return "".join(collected_lines) + "\n[Перезагрузка]"
+        return "".join(collected_lines) #+ "\n[Перезагрузка]"
 
     def _run_sequence(self, inputs, success_pattern):
         for inp in inputs:
@@ -131,8 +131,42 @@ class EnigmaBackend:
             
         output = self._wait_for_prompt(["нажмите 'Enter', чтобы вернуться на главное меню."])
         
-        return output
+        lines = output.split('\n')
+        filtered_lines = []
+        
+        skip_phrases = [
+            "Cryptoanalysis Module",
+            "Frequency Analysis",
+            "Check No-Self-Mapping",
+            "Find Crib Positions",
+            "Enter choice",
+            "Enter ciphertext",
+            "Enter plaintext",
+            "Enter crib",
+            "-------"
+        ]
 
+        for line in lines:
+            line = line.strip()
+            if not line:
+                continue
+    
+            if any(phrase in line for phrase in skip_phrases):
+                continue
+            
+            if line[0:2] in ["1.", "2.", "3.", "4.", "5.", "6."]:
+                continue
+                
+            if "Enigma Options" in line or "Ciphering" in line or "Exit" in line:
+                continue
+                
+            if "Press 'Enter'" in line:
+                continue
+            
+            filtered_lines.append(line)
+    
+        return '\n'.join(filtered_lines) if filtered_lines else "No results"
+    
     def close(self):
         if self.process:
             try:
