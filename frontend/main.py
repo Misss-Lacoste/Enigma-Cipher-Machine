@@ -2,9 +2,9 @@ import sys
 import os
 
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QTextEdit, QLineEdit, QComboBox,
-QGroupBox, QFormLayout, QMessageBox, QTabWidget, QScrollArea, QRadioButton, QButtonGroup)
+QGroupBox, QFormLayout, QMessageBox, QTabWidget, QScrollArea, QButtonGroup, QCheckBox)
 
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QTimer
 from PyQt5.QtGui import QFont
 
 from enigma_core import EnigmaBackend
@@ -25,6 +25,12 @@ class EnigmaGUI(QMainWindow):
             QMessageBox.critical(self, "Ошибка!", f"Не найден C++ backend .\n\n{str(e)}\n\nНеобходима компиляция.")
             sys.exit(1)
 
+        self.typewriter_timer = QTimer()
+        self.typewriter_timer.timeout.connect(self.type_next_char)
+        self.typewriter_text = ""
+        self.typewriter_index = 0
+        self.final_status_msg = ""
+
         self.init_ui()
 
     def init_ui(self):
@@ -40,6 +46,7 @@ class EnigmaGUI(QMainWindow):
 
         #вкладки (как в main.cpp)
         self.tabs = QTabWidget()
+        self.tabs.tabBar().setFont(QFont("Times New Roman", 11))
         
         #вкладка_1: ciphering(e/d)
         cipher_tab = self.create_cipher_tab()
@@ -98,7 +105,7 @@ class EnigmaGUI(QMainWindow):
         left_panel.addWidget(rotor_group)
         
         #кольца
-        ring_group = QGroupBox("Конфигурация колец (буквы A-Z)")
+        ring_group = QGroupBox("Конфигурация колец (буквы от 'A' до 'Z')")
         ring_group.setFont(QFont("Times New Roman", 11)) #, QFont.Bold
         ring_layout = QFormLayout()
         
@@ -108,6 +115,26 @@ class EnigmaGUI(QMainWindow):
         ring_layout.addRow("Кольца:", self.rings)
         ring_group.setLayout(ring_layout)
         left_panel.addWidget(ring_group)
+
+        stecker_group = QGroupBox("Коммутационная панель")
+        stecker_group.setFont(QFont("Times New Roman", 11))
+        stecker_layout = QVBoxLayout()
+
+        self.use_stecker = QCheckBox("Здесь можно поставить галочку для исп-я панели")
+        self.use_stecker.setFont(QFont("Times New Roman", 11))
+        stecker_layout.addWidget(self.use_stecker)
+
+        self.stecker_input = QLineEdit()
+        self.stecker_input.setFont(QFont("Courier New", 12))
+        self.stecker_input.setPlaceholderText("ML, RI, TA, etc.")
+        self.stecker_input.setEnabled(False)
+        stecker_layout.addWidget(self.stecker_input)
+
+        stecker_group.setLayout(stecker_layout)
+        left_panel.addWidget(stecker_group)
+
+        #поле ввода только при активной галочке
+        self.use_stecker.stateChanged.connect(lambda state: self.stecker_input.setEnabled(state == Qt.Checked))
         
         #занимаем все пространство свободное
         left_panel.addStretch()
@@ -115,7 +142,7 @@ class EnigmaGUI(QMainWindow):
 
         #кнопки
         right_panel = QVBoxLayout()
-        input_group = QGroupBox("Ввод сообщения")
+        input_group = QGroupBox("Ввод секретного сообщения")
         input_group.setFont(QFont("Times New Roman", 11))
         input_layout = QVBoxLayout()
         self.input_text = QTextEdit()
@@ -191,7 +218,7 @@ class EnigmaGUI(QMainWindow):
         right_panel.addLayout(btn_layout)
         
         #вывод
-        output_group = QGroupBox("Итоговое сообщение")
+        output_group = QGroupBox("Зашифрованное сообщение")
         output_group.setFont(QFont("Times New Roman", 11))
         output_layout = QVBoxLayout()
         self.output_text = QTextEdit()
@@ -211,14 +238,14 @@ class EnigmaGUI(QMainWindow):
         layout.addLayout(right_panel, 2)
         return widget
 
-    def _check_message_validity(self, text):
+    """def _check_message_validity(self, text):
         invalid_chars = set()
         for char in text:
             if char == ' ':
                 continue
             if not ('A' <= char <= 'Z' or 'a' <= char <= 'z'):
                 invalid_chars.add(char)
-        return len(invalid_chars) == 0, list(invalid_chars)
+        return len(invalid_chars) == 0, list(invalid_chars)"""
 
     def encrypt(self):
         self._process_operation("encrypt")
@@ -243,15 +270,40 @@ class EnigmaGUI(QMainWindow):
             rings = self.rings.text().upper()
             if len(rings) != 3 or not rings.isalpha():
                 QMessageBox.warning(self, "Ошибка конфигурации!", 
-                    "Следует ввести ровно 3 кольцевые настройки (буквы A-Z)!\n"
-                    "Символы кириллицы, цифры и иные занки запрещены.")
+                    "Следует ввести ровно 3 кольцевые настройки (буквы латинского алфавита от 'A' до 'Z')!\n"
+                    "Символы кириллицы, цифры и иные знаки запрещены.")
                 return
 
             if not all(('A' <= c <= 'Z' or 'a' <= c <= 'z') for c in rings):
-                QMessageBox.warning(self, "Ошибка конфишурации!", 
-                    "Внимание! Кольцевые настройки должны содеражть только буквы латинского алфавита (A-Z).\n"
-                    "Символы кириллицы, цифры и иные занки запрещены.")
+                QMessageBox.warning(self, "Ошибка конфигурации!", 
+                    "Внимание! Кольцевые настройки должны содеражть только буквы латинского алфавита от 'A' до 'Z'.\n"
+                    "Символы кириллицы, цифры и иные знаки запрещены.")
                 return
+
+            stecker_active = self.use_stecker.isChecked()
+            stecker_raw = self.stecker_input.text().strip()
+            stecker_final = ""
+
+            if stecker_active:
+                if not stecker_raw:
+                    QMessageBox.warning(self, "Ошибка конфигурации!", "Панель активирована, однако пары букв не введены.")
+                    return
+                
+                clean = stecker_raw.replace(" ", "").upper()
+                if len(clean) % 2 != 0:
+                    QMessageBox.warning(self, "Ошибка конфигурации!", "Количество введенных букв в буквосочетаниях должно быть четным.")
+                    return
+                if len(clean) > 26:
+                    QMessageBox.warning(self, "Ошибка конфигурации!", "Максимальное число допустимых пар букв - 13.")
+                    return
+                if not all('A' <= c <= 'Z' for c in clean):
+                    QMessageBox.warning(self, "Ошибка конфигурации!", "Допустимы только латинские буквы от 'A' до 'Z'")
+                    return
+                if len(set(clean)) != len(clean):
+                    QMessageBox.warning(self, "Ошибка конфигурации!", "Буквы в буквосочетаниях не должны повторяться.")
+                    return
+                    
+                stecker_final = clean
 
             text = self.input_text.toPlainText()
             if not text.strip():
@@ -263,27 +315,47 @@ class EnigmaGUI(QMainWindow):
                     "Внимание! Разрешены только символы латинского алфавита и пробелы по желанию.\n"
                     "Символы кириллицы, цифры и иные занки запрещены.")
                 return
-
+            
             self.status_label.setText("Обработка...")
             QApplication.processEvents()
 
             if mode == "encrypt":
-                result = self.backend.encrypt(text, rotors, rings)
-                self.status_label.setText("✓ Шифрование выполнено успешно!")
+                result = self.backend.encrypt(text, rotors, rings, stecker_active, stecker_final)
+                self.final_status_msg = "Шифрование выполнено успешно!"
             else:
-                result = self.backend.decrypt(text, rotors, rings)
-                self.status_label.setText("✓ Дешифровка выполнена успешно!")
+                result = self.backend.decrypt(text, rotors, rings, stecker_active, stecker_final)
+                self.final_status_msg = "Дешифровка выполнена успешно!"
 
-            self.output_text.setText(result)
+            self.start_typewriter_effect(result)
 
         except Exception as e:
-            self.output_text.setText(f"500 Internal Server Error:\n{str(e)}")
+            self.output_text.setText(f"Error 500: ошибка связи с бэкендом:\n{str(e)}")
             self.status_label.setText("✗ Ошибка!")
 
     def clear(self):
+        self.typewriter_timer.stop()
         self.input_text.clear()
         self.output_text.clear()
         self.status_label.setText("Готово к работе!")
+
+    def start_typewriter_effect(self, text):
+        self.typewriter_timer.stop()
+        self.output_text.clear()
+        self.typewriter_text = text
+        self.typewriter_index = 0
+        self.typewriter_timer.start(50)
+
+    def type_next_char(self):
+        if self.typewriter_index < len(self.typewriter_text):
+            self.output_text.insertPlainText(self.typewriter_text[self.typewriter_index])
+            self.typewriter_index += 1
+            
+            cursor = self.output_text.textCursor()
+            cursor.movePosition(cursor.End)
+            self.output_text.setTextCursor(cursor)
+        else:
+            self.typewriter_timer.stop()
+            self.status_label.setText(self.final_status_msg)
 
     #вкладки с информацией
     def create_info_tab(self, filename, title):
@@ -470,7 +542,7 @@ class EnigmaGUI(QMainWindow):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    app.setStyle("iOS")  # Красивый стиль
+    app.setStyle("iOS")
     window = EnigmaGUI()
     window.show()
     sys.exit(app.exec_())
