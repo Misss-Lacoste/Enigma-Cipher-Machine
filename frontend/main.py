@@ -339,7 +339,19 @@ class EnigmaGUI(QMainWindow):
         self.output_text.clear()
         self.status_label.setText("Готово к работе!")
 
-    
+    def _validate_crypto_input(self, text, field_name):
+        if not text.strip():
+            QMessageBox.warning(self, "Некорректный ввод!", f"Поле '{field_name}' не должно быть пустым.")
+            return False
+        for char in text:
+            if char == ' ':
+                continue
+            if not ('A' <= char <= 'Z' or 'a' <= char <= 'z'):
+                QMessageBox.warning(self, "Некорректный ввод!",
+                    #f"Поле '{field_name}' содержит недопустимые символы.\n"
+                    "Разрешены только символы латинского алфавита и пробелы по желанию.")
+                return False
+        return True   
 
     def start_typewriter_effect(self, text):
         self.typewriter_timer.stop()
@@ -441,6 +453,8 @@ class EnigmaGUI(QMainWindow):
         layout_freq.addWidget(output_freq)
         
         def do_freq():
+            if not self._validate_crypto_input(input_freq.toPlainText(), "Шифртекст"):
+                return
             res = self.backend.run_crypto_analysis(1, input_freq.toPlainText())
             output_freq.setText(res)
             self.status_label.setText("Частотный анализ завершен!")
@@ -511,7 +525,13 @@ class EnigmaGUI(QMainWindow):
         layout_nsm.addWidget(output_nsm)
 
         def do_nsm():
-            res = self.backend.run_crypto_analysis(2, input_plain.text(), input_cipher.text())
+            plain = input_plain.text()
+            cipher = input_cipher.text()
+            if not self._validate_crypto_input(plain, "Исходное сообщение"):
+                return
+            if not self._validate_crypto_input(cipher, "Шифртекст"):
+                return
+            res = self.backend.run_crypto_analysis(2, plain, cipher)
             output_nsm.setText(res)
             self.status_label.setText("Проверка завершена!")
 
@@ -575,9 +595,15 @@ class EnigmaGUI(QMainWindow):
         layout_crib.addWidget(output_crib)
 
         def do_crib():
-            res = self.backend.run_crypto_analysis(3, input_ct.toPlainText(), input_crib.text())
+            ct = input_ct.toPlainText()
+            crib = input_crib.text()
+            if not self._validate_crypto_input(ct, "Шифртекст"):
+                return
+            if not self._validate_crypto_input(crib, "Зацепка"):
+                return
+            res = self.backend.run_crypto_analysis(3, ct, crib)
             output_crib.setText(res)
-            self.status_label.setText("Поиск 'зацепок' найден.")
+            self.status_label.setText("Поиск 'зацепок' завершен.")
 
         btn_crib.clicked.connect(do_crib)
         crypto_tabs.addTab(tab_crib, "3. Позиции 'зацепок'")
