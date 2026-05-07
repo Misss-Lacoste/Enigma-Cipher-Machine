@@ -66,62 +66,50 @@ class EnigmaBackend:
         
         return "".join(collected_lines) + "\n[Перезагрузка]"
 
-    def encrypt(self, message, rotors, rings):
-        r1, r2, r3 = rotors
-        
-        inputs = [
-            "1",       #menu: ciphering
-            "E",       #mode: encrypt
-            str(r1),   #rotor 1
-            str(r2),   #rotor 2
-            str(r3),   #rotor 3
-            rings,     #rings
-            "N",       #skip Steckerbrett
-            message,   #message
-            "N"        #stop loop
-        ]
-        
+    def _run_sequence(self, inputs, success_pattern):
         for inp in inputs:
             self._send_input(inp)
-            
         output = self._wait_for_prompt(["Для продолжения процесса шифрования нажмите"])
-        
-        match = re.search(r"Your ciphered message is:\s*(.+)", output)
-        if match:
-            return match.group(1).strip()
-        
-        return f"Вывод отладки:\n{output}"
-
-    def decrypt(self, ciphertext, rotors, rings):
+        match = re.search(success_pattern, output)
+        return match.group(1).strip() if match else output.strip()
+    
+    def encrypt(self, message, rotors, rings, stecker_active=False, stecker_pairs=""):
         r1, r2, r3 = rotors
+        inputs = [
+            "1",  #пункт 1 из меню
+            "E",  #шифрование
+            str(r1), str(r2), str(r3), #роторы
+            rings,
+            "Y" if stecker_active 
+            else "N",
+        ]
+        if stecker_active:
+            inputs.append(stecker_pairs.replace(" ", ""))
+        inputs.append(message)
+        inputs.append("N")
         
+        return self._run_sequence(inputs, r"Your ciphered message is:\s*(.+)")
+
+    def decrypt(self, ciphertext, rotors, rings, stecker_active=False, stecker_pairs=""):
+        r1, r2, r3 = rotors
         inputs = [
             "1",
-            "D",  #decrypt
-            str(r1),
-            str(r2),
-            str(r3),
+            "D",
+            str(r1), str(r2), str(r3),
             rings,
-            "N",
-            ciphertext,
-            "N"
+            "Y" if stecker_active else "N",
         ]
+        if stecker_active:
+            inputs.append(stecker_pairs.replace(" ", ""))
+        inputs.append(ciphertext)
+        inputs.append("N")
         
-        for inp in inputs:
-            self._send_input(inp)
-            
-        output = self._wait_for_prompt(["Для продолжения процесса шифрования нажмите"])
-        
-        match = re.search(r"Your decrypted message is:\s*(.+)", output)
-        if match:
-            return match.group(1).strip()
-            
-        return f"Вывод отладки:\n{output}"
+        return self._run_sequence(inputs, r"Your decrypted message is:\s*(.+)")
 
     def get_info_file(self, filename):
         base_dir = os.path.dirname(self.exe_path)
-        data_dir = os.path.join(os.path.dirname(base_dir), "data")
-        filepath = os.path.join(data_dir, filename)
+        project_root = os.path.dirname(base_dir)
+        filepath = os.path.join(project_root, "data", filename)
         
         try:
             with open(filepath, 'r', encoding='utf-8') as f:
@@ -131,11 +119,11 @@ class EnigmaBackend:
 
     def run_crypto_analysis(self, sub_choice, text1, text2=""):
         inputs = [
-            "5",          #menu: cryptoanalysis
+            "5", #menu: cryptoanalysis
             str(sub_choice),
             text1,
             text2,
-            ""            #press 'enter' to return
+            ""  #press 'enter' to return
         ]
         
         for inp in inputs:
