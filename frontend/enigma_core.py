@@ -116,6 +116,19 @@ class EnigmaBackend:
                 return f.read()
         except FileNotFoundError:
             return f"File '{filename}' не найдено в папке 'data'.\nПожалуйста, убедитесь, что файлы существуют."
+        
+    def get_history(self):
+        backend_dir = os.path.dirname(self.exe_path)
+        filepath = os.path.join(backend_dir, "Cipher_History.txt")
+        
+        try:
+            with open(filepath, 'r', encoding='utf-8') as f:
+                content = f.read()
+            if not content.strip():
+                return "История операций пуста."
+            return content
+        except FileNotFoundError:
+            return "Файл истории не найден. Выполните первую операцию шифрования для его создания."  
 
     def run_crypto_analysis(self, sub_choice, text1, text2=""):
         inputs = [
@@ -129,7 +142,7 @@ class EnigmaBackend:
         for inp in inputs:
             self._send_input(inp)
             
-        output = self._wait_for_prompt(["нажмите 'Enter', чтобы вернуться на главное меню."])
+        output = self._wait_for_prompt(["Press 'Enter' to go back to the main menu..."])
         
         lines = output.split('\n')
         filtered_lines = []
@@ -137,11 +150,12 @@ class EnigmaBackend:
         skip_phrases = [
             "Cryptoanalysis Module",
             "Frequency Analysis",
+            "Frequency analysis",
             "Check No-Self-Mapping",
             "Find Crib Positions",
-            "Enter choice",
-            "Enter ciphertext",
-            "Enter plaintext",
+            #"Enter choice",
+            #"Enter ciphertext",
+            #"Enter plaintext",
             "Enter crib",
             "-------"
         ]
@@ -164,8 +178,8 @@ class EnigmaBackend:
                 continue
             
             filtered_lines.append(line)
-    
-        return '\n'.join(filtered_lines) if filtered_lines else "No results"
+
+        return '\n'.join(filtered_lines) if filtered_lines else "Backend error"
     
     def close(self):
         if self.process:
