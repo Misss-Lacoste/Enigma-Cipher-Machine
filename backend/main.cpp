@@ -36,7 +36,7 @@ void showAttackMethods() {
 }
 
 void Help() {
-	std::ifstream file("../data/help.txt");
+	std::ifstream file("../data/help_eng.txt");
 	std::string line;
 
 	while (std::getline(file, line)) {
