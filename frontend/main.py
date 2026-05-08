@@ -67,13 +67,16 @@ class EnigmaGUI(QMainWindow):
         #вкладка_5: crypto
         crypto_tab = self.create_crypto_tab()
         self.tabs.addTab(crypto_tab, "5. Криптоанализ")
+
+        history_ops_tab = self.create_history_tab()
+        self.tabs.addTab(history_ops_tab, "6. История операций")
         
         main_layout.addWidget(self.tabs)
         
         #состояние
         self.status_label = QLabel("Готово к работе")
         self.status_label.setFont(QFont("calibri", 8))
-        self.status_label.setStyleSheet("QLabel { background-color: #f0f0f0; padding: 5px; }")
+        self.status_label.setStyleSheet("QLabel { background-color: #daffc7; padding: 5px; }") #f0f0f0
         main_layout.addWidget(self.status_label)
 
     def create_cipher_tab(self):
@@ -609,6 +612,54 @@ class EnigmaGUI(QMainWindow):
         crypto_tabs.addTab(tab_crib, "3. Позиции 'зацепок'")
 
         layout.addWidget(crypto_tabs)
+        return widget
+    
+    def create_history_tab(self):
+        widget = QWidget()
+        layout = QVBoxLayout(widget)
+
+        header_layout = QHBoxLayout()
+        
+        title_lbl = QLabel("История кодирования")
+        title_lbl.setFont(QFont("Times New Roman", 11))
+        header_layout.addWidget(title_lbl)
+        header_layout.addStretch()
+
+        refresh_btn = QPushButton("Обновить историю")
+        refresh_btn.setFont(QFont("Times New Roman", 11))
+        refresh_btn.setMinimumHeight(35)
+        refresh_btn.setStyleSheet("""
+            QPushButton {
+                background-color: #9ffe2a; 
+                color: white; 
+                border-radius: 5px; 
+                padding: 5px 12px;
+            }
+            QPushButton:hover { 
+                background-color: #7efe2a; 
+            }
+            QPushButton:pressed { 
+                background-color: #37fe2a; 
+            }
+        """)
+        refresh_btn.clicked.connect(lambda: self.history_display.setPlainText(self.backend.get_history()))
+        header_layout.addWidget(refresh_btn)
+        
+        layout.addLayout(header_layout)
+
+        scroll = QScrollArea()
+        scroll.setWidgetResizable(True)
+        scroll.setStyleSheet("QScrollArea { background-color: white; }")
+
+        self.history_display = QTextEdit()
+        self.history_display.setReadOnly(True)
+        self.history_display.setFont(QFont("Courier New", 11)) 
+        self.history_display.setStyleSheet("QTextEdit { border: none; background-color: white; padding: 10px; }")
+        self.history_display.setPlainText(self.backend.get_history())
+
+        scroll.setWidget(self.history_display)
+        layout.addWidget(scroll)
+
         return widget
 
     def closeEvent(self, event):
