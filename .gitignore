@@ -59,5 +59,8 @@ dist/
 dist_linux/
 *.spec
 
-#zip
+#zip Windows
 *.zip
+
+#gz linux
+*.tar.gz
