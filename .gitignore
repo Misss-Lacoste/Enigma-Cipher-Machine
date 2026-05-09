@@ -56,6 +56,7 @@ __pycache__/
 # PyInstaller
 build/
 dist/
+dist_linux/
 *.spec
 
 #zip
