@@ -15,9 +15,24 @@ class EnigmaGUI(QMainWindow):
         self.setWindowTitle("Margarita's Enigma Cipher Machine")
         self.resize(1000, 700)
         
-        base_dir = os.path.dirname(os.path.abspath(__file__))
+        """base_dir = os.path.dirname(os.path.abspath(__file__))
         project_dir = os.path.dirname(base_dir)
-        exe_path = os.path.join(project_dir, "backend", "enigma_backend.exe")
+        exe_path = os.path.join(project_dir, "backend", "enigma_backend.exe") """
+
+        if getattr(sys, 'frozen', False):
+            # 1.запуск из собранного .exe
+            app_dir = os.path.dirname(sys.executable)
+            internal_path = os.path.join(app_dir, "_internal", "backend", "enigma_backend.exe")
+            root_path = os.path.join(app_dir, "backend", "enigma_backend.exe")
+            exe_path = internal_path if os.path.exists(internal_path) else root_path
+        else:
+            # 2.запуск из исходников - локально
+            base_dir = os.path.dirname(os.path.abspath(__file__))
+            project_dir = os.path.dirname(base_dir)
+            exe_path = os.path.join(project_dir, "backend", "enigma_backend.exe")
+            
+        print(f"[DEBUG] Ищем бэкенд по пути: {exe_path}")
+        print(f"[DEBUG] Файл существует: {os.path.exists(exe_path)}")
         
         try:
             self.backend = EnigmaBackend(exe_path)
