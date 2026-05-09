@@ -57,3 +57,6 @@ __pycache__/
 build/
 dist/
 *.spec
+
+#zip
+*.zip
