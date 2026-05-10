@@ -8,19 +8,20 @@
 
 #h(2em) Программный эмулятор шифровальной машины "Энигма" — это образовательно-программное кросс-платформенное десктоп-приложение, предназначенное для изучения принципов криптографии, исторического контекста Второй мировой войны и основ криптоанализа. 
 
-#h(2em) В отличие от простых эмуляторов, разрабатываемый продукт включает не только точную реализацию алгоритма шифрования 3-роторной "Энигмы" Wehrmacht, но и интерактивный симулятор с визуализацией процесса шифрования, а также демонстрацию методов взлома, использовавшихся в Блетчли-Парке.
+#h(2em) В отличие от простых эмуляторов, разрабатываемый продукт включает не только точную реализацию алгоритма шифрования 3-роторной "Энигмы" Wehrmacht, но и интерактивный симулятор с визуализацией процесса шифрования, а также демонстрацию методов взлома, использовавшихся в Блетчли-Парке, информацию по которым можно посмотреть, перейдя по данной ссылке - https://www.codesandciphers.org.uk/virtualbp/tbombe/tbombe.htm
 
 #h(2em) Основные проблемы, решаемые программой:\
-1. Отсутствие наглядных инструментов для изучения работы "Энигмы" в образовательном процессе;\
-2. Сложность понимания принципов криптоанализа без практической демонстрации;\
+1. Отсутствие наглядных инструментов для изучения работы "Энигмы" в образовательном процессе.\
+2. Сложность понимания принципов криптоанализа без практической демонстрации.\
 3. Необходимость в инструменте для экспериментов с различными конфигурациями машины.
 
 #h(2em) Проект нацелен на создание комплексного решения, которое может использоваться:\
-- В учебном процессе при подготовке специалистов по информационной безопасности;\
-- В исследовательских целях для изучения исторических аспектов криптографии;\
+- В учебном процессе при подготовке специалистов по информационной безопасности.\
+- В исследовательских целях для изучения исторических аспектов криптографии.\
 - Как демонстрационный инструмент на лекциях и семинарах по различным IT-дисциплинам.
 
 #h(2em) Существующие аналоги представляют собой либо простые эмуляторы шифрования без элементов криптоанализа, либо сложные исторические реконструкции без образовательной составляющей, без ясного изложения самой сути шифрования и дешифровки сообщений.
+#link(<analog>)[Ссылки на доступные аналоги].
 
 = ОСНОВАНИЯ ДЛЯ РАЗРАБОТКИ
 == Документ(ы), на основании которого(ых) ведется разработка
@@ -328,7 +329,7 @@
 == Требования к составу и параметрам технических средств
 
 #h(2em) Для надежной и бесперебойной работы программы требуется следующий состав технических средств:
-1. Десктопное устройство с возможностью использования операционной системы Windows 10/11 или Linuх.
+1. Персональный компьютер или ноутбук с не менее, чем 4-ядерным процессором с частотой не ниже 2.0ГГц, оперативной памятью 8 ГБ ОЗУ, свободным дисковым пространством не менее 10 ГБ.
 
 == Требования к информационной и программной совместимости
 
@@ -340,7 +341,7 @@
 
 #h(2em) Для десктоп-приложения потребуется:
 
-Компьютер с операционной системой Windows 10/11 или Linux.
+Возможность пользование операционной системой Windows 10/11 или Linux.
 
 === Требования к исходным кодам и языкам программирования
 
@@ -452,9 +453,9 @@
         
         table.header(
             header-cell([*Функция*]),
-            header-cell([*Cryptool 2* \ *эмуляция Энигмы*]),
+            header-cell([*Tony Sale's Enigma* \ *online-эмулятор Энигмы*]),
             header-cell([*Python Enigma* \ *библиотека*]),
-            header-cell([*Online Enigma* \ *веб-эмулятор*]),
+            header-cell([*Virtual Enigma Machine* \ *веб-эмулятор*]),
             header-cell([*Enigma Simulator* \ *App Store*]),
             header-cell([*Our Project*])
         ),
@@ -594,8 +595,11 @@
 18. The Enigma Cipher Machine. URL: https://www.codesandciphers.org.uk/enigma/index.htm
 19. The Enigma Cipher Machine: rotors. URL: https://www.codesandciphers.org.uk/enigma/rotorspec.htm
 20. Enigma Crib Analysis. URL: https://www.101computing.net/enigma-crib-analysis/
+21. The Enigma Enulator. URL: https://www.codesandciphers.org.uk/enigma/emachines/enigmad.htm
+22. The Breaking of Enigma by the Polish Mathematicians. URL: https://www.codesandciphers.org.uk/virtualbp/poles/poles.htm
+23. Virtual Wartime Bletchley Park by Tony Sale. URL: https://www.codesandciphers.org.uk/virtualbp/tbombe/tbombe.htm
 
-= ПРИЛОЖЕНИЕ. ССЫЛКИ НА АНАЛОГИ
+= ПРИЛОЖЕНИЕ. ССЫЛКИ НА АНАЛОГИ <analog>
 
 #figure(
   table(
@@ -604,13 +608,14 @@
     align: center + horizon,
     table.header([*Приложение*], [*Ссылка*]),
 
-    [Cryptool 2 (с модулем Enigma)], [https://www.cryptool.org/],
+    [ENIGMA NEXT GENERATION app fot iOS], [https://github.com/ENIGMA-NEXT-GENERATION/enigma-ios],
     [Python Enigma Library], [https://pypi.org/project/enigma/],
     [Online Enigma Emulator], [https://observablehq.com/@tmcw/enigma-machine],
-    [Enigma Simulator для iOS], [https://apps.apple.com/app/enigma-simulator/],
-    [Enigma Machine Simulator (Android)], [https://play.google.com/store/apps/details?id=uk.co.ordnancesurvey.enigma],
-    [Virtual Enigma Machine], [http://enigma.louisedade.co.uk/],
-    [Navy M4 Enigma Simulator], [https://www.lysator.liu.se/~koma/enigma/],
+    [Enigma messager for iOS], [https://apps.apple.com/ru/app/enigma-ai-chat-with-chatbot/id6473676637?l=en-GB],
+    [Enigma Machine Simulator app for Android], [https://github.com/martin-braun/enigma-android],
+    [Virtual Enigma Machine], [https://www.public-enigma.com/about],
+    [Virtual Enigma], [https://enigma.virtualcolossus.co.uk/press.html],
+    [Tony Sale's Enigma], [https://www.codesandciphers.org.uk/enigma/emachines/enigmad.htm]
   )
 )
 
