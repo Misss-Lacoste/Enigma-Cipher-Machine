@@ -49,14 +49,15 @@ Enigma-Cipher-Machine/
 2. Есть возможность склонировать данный репозиторий на свой ПК в случае, если установлен Python, Makefile.
 
     2.1. `git clone https://github.com/Misss-Lacoste/Enigma-Cipher-Machine`
-         `cd /d/HSE/Enigma-Cipher-Machine`
+   
+    2.2.`cd /d/HSE/Enigma-Cipher-Machine`
     
-    2.2. `pip install -r requirements.txt`
+    2.3. `pip install -r requirements.txt`
 
-    2.3. `cd backend`
+    2.4. `cd backend`
 
-    2.4. `mingw32-make run`
+    2.5. `mingw32-make run`
 
-    2.5. Далее в проводнике (в папке проекта) после успешной компиляции backend'а найти файл `EnigmaApp.bat` и открыть его.
+    2.6. Далее в проводнике (в папке проекта) после успешной компиляции backend'а найти файл `EnigmaApp.bat` и открыть его.
   
-3. Можно скомпилировать только backend-часть, не активируя при этом frontend и работать с консольной версией приложения. Для этого аналогично запускаем программу, используя команду `mingw32-make run` и наблюдаем интерактивный вывод в терминале.
+4. Можно скомпилировать только backend-часть, не активируя при этом frontend и работать с консольной версией приложения. Для этого аналогично запускаем программу, используя команду `mingw32-make run` и наблюдаем интерактивный вывод в терминале.
