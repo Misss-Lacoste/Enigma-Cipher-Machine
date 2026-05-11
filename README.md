@@ -50,7 +50,7 @@ Enigma-Cipher-Machine/
 
     2.1. `git clone https://github.com/Misss-Lacoste/Enigma-Cipher-Machine`
 
-         `cd /d/HSE/Enigma-Cipher-Machine `
+         `cd /d/HSE/Enigma-Cipher-Machine`
     
     2.2. `pip install -r requirements.txt`
 
